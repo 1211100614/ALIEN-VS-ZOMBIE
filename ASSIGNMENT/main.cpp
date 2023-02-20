@@ -18,15 +18,16 @@ class Board
 {
 private:
     vector<vector<char>> board_size;
-    int column, row , zombie;
+    int column, row;
+
 
 public:
-    Board(int board_Columns = 5, int board_Rows = 9, int zombie_count = 1);
-    void init(int board_Columns, int board_Rows, int zombie_count);
+    Board(int board_Columns = 5, int board_Rows = 9);
+    void init(int board_Columns, int board_Rows);
     void display() const;
 };
 
-Board::Board(int board_Columns, int board_Rows, int zombie_count)
+Board::Board(int board_Columns, int board_Rows)
 {
     cout << endl;
     cout << "Board Settings" << endl;
@@ -36,19 +37,18 @@ Board::Board(int board_Columns, int board_Rows, int zombie_count)
     cin >> board_Rows;
     cout << "Enter columns => ";
     cin >> board_Columns;
-    cout << "Zombie count => ";
-    cin >> zombie_count;
 
-    init(board_Columns, board_Rows, zombie_count);
+    init(board_Columns, board_Rows);
 }
 
-void Board::init(int board_Columns, int board_Rows, int zombie_count)
+void Board::init(int board_Columns, int board_Rows)
 {
-    row= board_Rows;
-    column= board_Columns;
-    zombie = zombie_count;
+    row = board_Rows;
+    column = board_Columns;
+   
 
-    
+    char objects[] = {'h', 'p', 'r', '>', '<', '^', 'v', ' ', ' ', ' '};
+    int objectno = 10;
 
     board_size.resize(row);
     for (int i = 0; i < row; ++i)
@@ -56,7 +56,44 @@ void Board::init(int board_Columns, int board_Rows, int zombie_count)
         board_size[i].resize(column);
     }
 
+    for (int i = 0; i < row; ++i)
+    {
+        for (int j = 0; j < column; ++j)
+        {
+            int objNo = rand() % objectno;
+            board_size[i][j] = objects[objNo];
+        }
+    }
 
+    // Place "A" alien in the middle
+    int middle_row = row / 2;
+    int middle_col = column / 2;
+    board_size[middle_row][middle_col] = 'A';
+
+    // Place zombies
+    int zombie;
+    cout << "Enter the number of zombies (1-9): ";
+    cin >> zombie;
+    while (zombie < 1 || zombie > 9)
+    {
+        cout << "Invalid input. Enter a number between 1 and 9: ";
+        cin >> zombie;
+    }
+
+    int count = 0;
+    while (count < zombie)
+    {
+        int row = rand() % board_Rows;
+        int col = rand() % board_Columns;
+        if (board_size[row][col] == ' ')
+        {
+            int zombie_num = count + 1;
+            board_size[row][col] = '0' + zombie_num;
+            count++;
+        }
+    }
+
+    
 }
 
 void Board::display() const
@@ -106,17 +143,16 @@ void Board::display() const
     {
         cout << " " << (j + 1) % 10;
     }
-    cout << endl
-         << endl;
+    
+    cout << endl;
+    cout << endl;
+ 
 }
-
-
 
 void gameBoardDisplay()
 {
     Board board;
     board.display();
-  
 }
 
 void displayMenu()
@@ -136,10 +172,7 @@ void displayMenu()
     cout << "| Q => Quit                                                |" << endl;
     cout << "+----------------------------------------------------------+" << endl;
     cout << endl;
-    
 }
-
-
 
 void displayData(int rows, int columns, int zombies)
 {
@@ -149,12 +182,11 @@ void displayData(int rows, int columns, int zombies)
     cout << endl;
 }
 
-
 void displayHelp()
 {
-    cout << "1. up = Move up"  << endl;
+    cout << "1. up = Move up" << endl;
     cout << "2. down = Move down" << endl;
-    cout << "3. left = Move left"  << endl;
+    cout << "3. left = Move left" << endl;
     cout << "4. right = Move right" << endl;
     cout << "5. arrow = Change the direction of an arrow" << endl;
     cout << "6. help = Display these user commands" << endl;
@@ -170,7 +202,6 @@ int main()
     int columns = 9;
     int zombies = 1;
 
-
     char choice;
     bool done = false;
     displayMenu();
@@ -183,7 +214,7 @@ int main()
         switch (choice)
         {
         case '1':
-            displayData(rows,columns,zombies);
+            displayData(rows, columns, zombies);
             break;
         case '2':
             displayHelp();
@@ -191,11 +222,9 @@ int main()
         case '3':
             gameBoardDisplay();
             break;
-        case '4':
-            ;
+        case '4':;
             break;
-        case '5':
-            ;
+        case '5':;
             break;
         case 'Q':
             done = true;
